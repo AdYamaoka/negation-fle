@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sorteador – Phrases à contredire</title>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --card: #ffffff;
+      --text: #2f2f2f;
+      --muted: #666666;
+      --concept: #b08968;
+      --practice: #7a8c7b;
+      --blue: #25364d;
+      --border: #e4ded7;
+      --shadow: 0 14px 40px rgba(0,0,0,0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(176,137,104,0.18), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      padding: 30px 18px 46px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #f1e9e2;
+      color: #6a4d3a;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      color: var(--blue);
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 14px auto 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.45;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel, .support {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: clamp(22px, 3vw, 34px);
+    }
+
+    .category-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .category-name {
+      display: inline-block;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: #edf1ee;
+      color: #536653;
+      border: 1px solid #dce4dc;
+      font-size: 0.95rem;
+    }
+
+    .counter {
+      color: #777;
+      font-size: 0.95rem;
+    }
+
+    .phrase-box {
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 26px 10px;
+      border-radius: 24px;
+      background: #faf8f6;
+      border: 1px solid #e9e1d9;
+    }
+
+    .phrase {
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 1.08;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+
+    .primary { background: var(--blue); color: white; }
+    .secondary { background: var(--concept); color: white; }
+    .soft { background: #eef1ee; color: var(--text); border: 1px solid #d8ded8; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .filter {
+      background: white;
+      border: 1px solid #ddd5ce;
+      box-shadow: none;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+    }
+
+    .filter.active {
+      background: var(--practice);
+      color: white;
+      border-color: var(--practice);
+    }
+
+    .task {
+      margin-top: 20px;
+      background: #f6f3ef;
+      border-left: 5px solid var(--concept);
+      padding: 16px 18px;
+      border-radius: 16px;
+      color: #4e4e4e;
+      font-size: 1.05rem;
+      line-height: 1.45;
+    }
+
+    .support h2 {
+      margin: 0 0 16px;
+      color: var(--blue);
+      font-size: 1.65rem;
+    }
+
+    .support-section {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+
+    .support-section:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .support-section h3 {
+      margin: 0 0 9px;
+      font-size: 1.05rem;
+      color: #6a4d3a;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: #faf8f6;
+      border: 1px solid #e7ded6;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 0.96rem;
+      color: #404040;
+    }
+
+    .models {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .model {
+      background: #f7f9f7;
+      border: 1px solid #dfe8df;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+
+    .example {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f4ece5;
+      border: 1px solid #ead9ca;
+      line-height: 1.45;
+      color: #4a3a30;
+    }
+
+    .example strong { color: #6a4d3a; }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #777;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .phrase-box { min-height: 210px; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      button, .filters, footer { display: none; }
+      .panel, .support { box-shadow: none; }
+      .main-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="tag">A1–B1 · Expression du désaccord</div>
+      <h1>Phrases à contredire</h1>
+      <p class="subtitle">Chaque élève tire une phrase au sort, puis utilise les structures proposées pour formuler une réponse négative avec une justification simple.</p>
+    </header>
+
+    <main class="main-grid">
+      <section class="panel">
+        <div class="category-line">
+          <div id="categoryName" class="category-name">Catégorie : toutes</div>
+          <div id="counter" class="counter">40 phrases disponibles</div>
+        </div>
+
+        <div class="phrase-box">
+          <div id="phrase" class="phrase">Cliquez pour tirer une phrase.</div>
+        </div>
+
+        <div class="controls">
+          <button class="primary" onclick="drawPhrase()">Tirer une phrase</button>
+          <button class="secondary" onclick="copyActivity()">Copier</button>
+          <button class="soft" onclick="resetApp()">Réinitialiser</button>
+        </div>
+
+        <div class="filters" id="filters"></div>
+
+        <div class="task">
+          <strong>Consigne :</strong> Je lis la phrase, je dis que je ne suis pas d’accord, puis j’explique avec <em>parce que</em>, <em>ça dépend</em> ou <em>par exemple</em>.
+        </div>
+      </section>
+
+      <aside class="support">
+        <h2>Boîte à outils</h2>
+
+        <div class="support-section">
+          <h3>Dire le désaccord</h3>
+          <div class="chips">
+            <span class="chip">Je ne suis pas d’accord.</span>
+            <span class="chip">Je ne pense pas.</span>
+            <span class="chip">Pas vraiment.</span>
+            <span class="chip">Ce n’est pas vrai.</span>
+            <span class="chip">Je pense différemment.</span>
+            <span class="chip">Je ne suis pas sûr(e).</span>
+          </div>
+        </div>
+
+        <div class="support-section">
+          <h3>Nuancer</h3>
+          <div class="chips">
+            <span class="chip">Pas toujours.</span>
+            <span class="chip">Pas forcément.</span>
+            <span class="chip">Parfois.</span>
+            <span class="chip">En général.</span>
+            <span class="chip">Ça dépend.</span>
+            <span class="chip">Ça dépend des personnes.</span>
+            <span class="chip">Ça dépend de la situation.</span>
+          </div>
+        </div>
+
+        <div class="support-section">
+          <h3>Justifier</h3>
+          <div class="chips">
+            <span class="chip">parce que…</span>
+            <span class="chip">car…</span>
+            <span class="chip">en fait…</span>
+            <span class="chip">dans ma vie…</span>
+            <span class="chip">pour moi…</span>
+            <span class="chip">à mon avis…</span>
+            <span class="chip">par exemple…</span>
+          </div>
+        </div>
+
+        <div class="support-section">
+          <h3>Arguments simples</h3>
+          <div class="chips">
+            <span class="chip">Les gens sont différents.</span>
+            <span class="chip">Chaque personne est différente.</span>
+            <span class="chip">Il y a des exceptions.</span>
+            <span class="chip">Ce n’est pas pareil pour tout le monde.</span>
+            <span class="chip">Ce n’est pas toujours comme ça.</span>
+          </div>
+        </div>
+
+        <div class="support-section">
+          <h3>Structures prêtes</h3>
+          <div class="models">
+            <div class="model">Je ne suis pas d’accord parce que…</div>
+            <div class="model">Ce n’est pas toujours vrai parce que…</div>
+            <div class="model">Je comprends, mais je pense que…</div>
+            <div class="model">Ça dépend, parce que…</div>
+            <div class="model">Pour moi, ce n’est pas vrai. Par exemple…</div>
+          </div>
+        </div>
+
+        <div class="example">
+          <strong>Exemple :</strong><br>
+          Phrase : <em>Tout le monde aime le chocolat.</em><br>
+          Réponse : <em>Je ne suis pas d’accord. Ce n’est pas toujours vrai parce que chaque personne est différente. Par exemple, moi, je n’aime pas le chocolat.</em>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      Conseil professeur : après chaque réponse, demandez « Pourquoi ? », « Toujours ? » ou « Ça dépend de quoi ? ».
+    </footer>
+  </div>
+
+  <script>
+    const phrases = [
+      { cat: "Vie quotidienne", text: "Tout le monde aime le chocolat." },
+      { cat: "Vie quotidienne", text: "Le café est toujours meilleur le matin." },
+      { cat: "Vie quotidienne", text: "Le week-end est toujours trop court." },
+      { cat: "Vie quotidienne", text: "Les enfants aiment toujours les dessins animés." },
+      { cat: "Vie quotidienne", text: "Les adultes sont toujours sérieux." },
+
+      { cat: "Nourriture", text: "La pizza est le meilleur plat du monde." },
+      { cat: "Nourriture", text: "Les légumes ne sont pas bons." },
+      { cat: "Nourriture", text: "Le dessert est la meilleure partie du repas." },
+      { cat: "Nourriture", text: "Tout le monde aime le fromage." },
+      { cat: "Nourriture", text: "Manger à la maison est toujours mieux qu’au restaurant." },
+
+      { cat: "Habitudes", text: "Se lever tôt est toujours une bonne chose." },
+      { cat: "Habitudes", text: "Regarder des séries est une perte de temps." },
+      { cat: "Habitudes", text: "Faire du sport est facile." },
+      { cat: "Habitudes", text: "Dormir beaucoup est inutile." },
+      { cat: "Habitudes", text: "Les gens aiment toujours voyager." },
+
+      { cat: "Technologie", text: "Les téléphones sont indispensables." },
+      { cat: "Technologie", text: "Les réseaux sociaux sont amusants." },
+      { cat: "Technologie", text: "Internet est toujours utile." },
+      { cat: "Technologie", text: "Les jeunes utilisent trop leur téléphone." },
+      { cat: "Technologie", text: "Les livres sont moins intéressants que les vidéos." },
+
+      { cat: "Relations", text: "Les amis doivent toujours être d’accord." },
+      { cat: "Relations", text: "Les disputes sont toujours négatives." },
+      { cat: "Relations", text: "Les gens disent toujours la vérité." },
+      { cat: "Relations", text: "Il est facile de comprendre les autres." },
+      { cat: "Relations", text: "Tout le monde aime parler." },
+
+      { cat: "Travail / études", text: "Étudier est toujours ennuyeux." },
+      { cat: "Travail / études", text: "Le travail est plus important que les loisirs." },
+      { cat: "Travail / études", text: "Apprendre une langue est difficile." },
+      { cat: "Travail / études", text: "Les professeurs ont toujours raison." },
+      { cat: "Travail / études", text: "Les étudiants aiment faire leurs devoirs." },
+
+      { cat: "Société", text: "Les villes sont meilleures que la campagne." },
+      { cat: "Société", text: "La pluie est toujours désagréable." },
+      { cat: "Société", text: "Le silence est ennuyeux." },
+      { cat: "Société", text: "Les vacances sont toujours parfaites." },
+      { cat: "Société", text: "Les gens préfèrent être seuls." },
+
+      { cat: "Divers", text: "Les chats sont plus intelligents que les chiens." },
+      { cat: "Divers", text: "Les films sont meilleurs que les livres." },
+      { cat: "Divers", text: "Les matins sont meilleurs que les nuits." },
+      { cat: "Divers", text: "Les surprises sont toujours agréables." },
+      { cat: "Divers", text: "Être en retard n’est pas grave." }
+    ];
+
+    let selectedCategory = "Toutes";
+    let current = null;
+
+    const categories = ["Toutes", ...new Set(phrases.map(p => p.cat))];
+
+    function getPool() {
+      return selectedCategory === "Toutes" ? phrases : phrases.filter(p => p.cat === selectedCategory);
+    }
+
+    function renderFilters() {
+      const filters = document.getElementById("filters");
+      filters.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "filter" + (cat === selectedCategory ? " active" : "");
+        btn.textContent = cat;
+        btn.onclick = () => {
+          selectedCategory = cat;
+          current = null;
+          document.getElementById("phrase").textContent = "Cliquez pour tirer une phrase.";
+          renderFilters();
+          updateCounter();
+        };
+        filters.appendChild(btn);
+      });
+    }
+
+    function updateCounter() {
+      const pool = getPool();
+      document.getElementById("categoryName").textContent = "Catégorie : " + selectedCategory.toLowerCase();
+      document.getElementById("counter").textContent = pool.length + " phrases disponibles";
+    }
+
+    function drawPhrase() {
+      const pool = getPool();
+      current = pool[Math.floor(Math.random() * pool.length)];
+      document.getElementById("phrase").textContent = current.text;
+      document.getElementById("categoryName").textContent = "Catégorie : " + current.cat;
+    }
+
+    async function copyActivity() {
+      if (!current) {
+        alert("Tirez d’abord une phrase.");
+        return;
+      }
+      const text = `Phrase : ${current.text}\nCatégorie : ${current.cat}\n\nRéponse possible :\nJe ne suis pas d’accord parce que...\nCe n’est pas toujours vrai parce que...\nÇa dépend de la situation / des personnes.\nPar exemple...`;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Activité copiée.");
+      } catch (e) {
+        alert(text);
+      }
+    }
+
+    function resetApp() {
+      selectedCategory = "Toutes";
+      current = null;
+      document.getElementById("phrase").textContent = "Cliquez pour tirer une phrase.";
+      renderFilters();
+      updateCounter();
+    }
+
+    renderFilters();
+    updateCounter();
+  </script>
+</body>
+</html>
